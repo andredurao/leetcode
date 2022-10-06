@@ -18,6 +18,15 @@ def sorted_squares(nums)
   # O(n) time, O(n) space
   result = []
   while positive_squares.any? || negative_squares.any?
+    # inserting and ordering cases
+    if positive_squares.any? && negative_squares.any?
+      if positive_squares.first <= negative_squares.last
+        result << positive_squares.shift
+      else
+        result << negative_squares.pop
+      end
+    end
+
     #draining empty queue cases O(1)
     if negative_squares.empty?
       result += positive_squares
@@ -26,15 +35,6 @@ def sorted_squares(nums)
     if positive_squares.empty?
       result += negative_squares.reverse
       negative_squares = []
-    end
-
-    # inserting and ordering cases
-    if positive_squares.any? && negative_squares.any?
-      if positive_squares.first <= negative_squares.last
-        result << positive_squares.shift
-      else
-        result << negative_squares.pop
-      end
     end
   end
   result
