@@ -8,3 +8,6 @@ end
 
 nums = [12,345,2,6,7896]
 puts find_numbers(nums)
+
+# Another solution would be using truncate of log(num) at base 10.
+# It wound follow the amount of digits per each number
