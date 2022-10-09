@@ -3,6 +3,7 @@
 # @param {Integer[]} nums2
 # @param {Integer} n
 # @return {Void} Do not return anything, modify nums1 in-place instead.
+# Complexity analysis: Time O(n+m) Space O(n+m)
 def merge(nums1, m, nums2, n)
   result = []
   m_index = n_index = 0
