@@ -31,3 +31,10 @@ def max_child(node)
   max_right = node.right ? max_child(node.right) : node.val
   [max_left, max_right].max
 end
+
+def max(node)
+  return -Float::INFINITY unless node
+  l = max(node.left)
+  r = max(node.right)
+  [l, r, node.val].max
+end
