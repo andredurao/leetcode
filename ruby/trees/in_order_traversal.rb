@@ -1,15 +1,21 @@
 class Node
-  attr_accessor :left, :right, :value
+  attr_accessor :left, :right, :val
 
-  def initialize(value)
-    @value = value
+  def initialize(val)
+    @val = val
   end
 end
 
-def in_order_traversal(node, items=[])
-  in_order_traversal(node.left, items) if node.left
+def inorder_traversal(root)
+  return nil unless root
+  traversal_helper(root)
+end
+
+def traversal_helper(node, items=[])
+  return [] unless node
+  traversal_helper(node.left, items)
   items << node.value
-  in_order_traversal(node.right, items) if node.right
+  traversal_helper(node.right, items)
   items
 end
 
@@ -26,5 +32,6 @@ root.right.left = Node.new(5)
 root.right.right = Node.new(7)
 # ============================
 
-p 'in_order_traversal'
-p in_order_traversal(root)
+p 'inorder_traversal'
+p inorder_traversal(Node.new(nil))
+# p inorder_traversal(nil)
