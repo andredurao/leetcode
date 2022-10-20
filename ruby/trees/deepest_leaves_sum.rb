@@ -4,18 +4,17 @@ require './tree.rb'
 # @param {TreeNode} root
 # @return {Integer}
 def deepest_leaves_sum(root)
-  heights_map = group_vals_by_height(root)
-  max = heights_map.keys.max
-  heights_map[max].reduce(:+)
+  map = {}
+  max_height = group_vals_by_height(root, map)
+  map[max_height]
 end
 
-def group_vals_by_height(root, map={}, height=0)
-  return unless root
-  map[height] ||= []
-  map[height] << root.val
-  group_vals_by_height(root.left, map, height+1)
-  group_vals_by_height(root.right, map, height+1)
-  map
+def group_vals_by_height(root, map, height=1)
+  return 0 unless root
+  map[height] = map[height] ? (map[height] + root.val) : root.val
+  l = group_vals_by_height(root.left, map, height+1)
+  r = group_vals_by_height(root.right, map, height+1)
+  [l+1, r+1].max
 end
 
 tree = [1,2,3,4,5,nil,6,7,nil,nil,nil,nil,8]
