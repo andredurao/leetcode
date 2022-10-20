@@ -7,6 +7,7 @@ def deepest_leaves_sum(root)
   map = {}
   max_height = group_vals_by_height(root, map)
   map[max_height]
+  # A BFS performs better than recursion in this case (mc kinley)
 end
 
 def group_vals_by_height(root, map, height=1)
