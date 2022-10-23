@@ -1,39 +1,47 @@
 # @param {Integer} target
 # @return {Integer}
 def racecar(target)
-  limit = target.bit_length + 1
-  barrier = 1 << limit
-  pq = [[0, target]]
-  dist = [Float::INFINITY] * (2 * barrier + 1)
-  dist[target] = 0
-  # binding.irb
+  queue = [{pos: 0, speed: 1, steps: 0}]
+  visited = {}
+  while queue.any?
+    state = queue.pop
+    return state[:steps] if state[:pos] == target
 
-  while pq.any?
-    steps, targ = pq.pop
-    next if targ && dist[targ] && dist[targ] > steps
-
-    0.upto(limit+1) do |k|
-      walk = (1 << k) - 1
-      steps2 = steps + k + 1
-      targ2 = walk - targ
-      steps2 -= 1 if walk == targ  # No "R" command if already exact
-
-      if targ2.abs <= barrier && steps2 < dist[targ2]
-        heap_push(pq, [steps2, targ2])
-        dist[targ2] = steps2
+    if (state[:pos] + state[:speed]) <= 2 * target
+      new_state = {
+        pos: state[:pos] + state[:speed],
+        speed: 2 * state[:speed],
+        steps: state[:steps] + 1
+      }
+      key = "#{new_state[:pos]}-#{new_state[:speed]}"
+      if !visited[key]
+        visited[key] = true
+        queue.push(new_state)
+      end
+    end
+    if state[:pos] >= (target / 2)
+      new_state = {
+        pos: state[:pos],
+        speed: (state[:speed] == 0 ? -1 : 1),
+        steps: state[:steps] + 1
+      }
+      key = "#{new_state[:pos]}-#{new_state[:speed]}"
+      if !visited[key]
+        visited[key] = true
+        # queue.push(new_state)
+        heap_push(queue, new_state)
       end
     end
   end
-
-  return dist[0]
+  return -1
 end
 
 def heap_push(arr, x)
-  index = arr.bsearch_index { |y| (y[0] <=> x[0]) >= 0 } || arr.size
+  index = arr.bsearch_index { |y| (y[:pos] <=> x[:pos]) >= 0 } || arr.size
   arr.insert(index, x)
 end
 
-target = 330
+target = ARGV[0].to_i
 p racecar(target)
 
 # # https://leetcode.com/problems/minimize-deviation-in-array/discuss/1053053/Ruby-Working-with-Priority-Queue-in-Ruby-one-approach/842794/

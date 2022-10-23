@@ -3,6 +3,7 @@
 package main
 
 import "strconv"
+import "os"
 
 type State struct {
 	Position int
@@ -45,7 +46,6 @@ func racecar(target int) int {
 
 	for minHeap.Len() > 0 {
 		state := minHeap.Pop().(State)
-
 		if state.Position == target {
 			return state.Steps
 		}
@@ -61,6 +61,7 @@ func racecar(target int) int {
 				visited[key] = true
 			}
 		}
+		// ---------------------------
 		if state.Position >= (target / 2) {
 			nextPosition := state.Position
 			nextSpeed := 1
@@ -82,5 +83,6 @@ func racecar(target int) int {
 }
 
 func main() {
-	println(racecar(330))
+	target, _ := strconv.Atoi(os.Args[1])
+	println(racecar(target))
 }
