@@ -6,11 +6,12 @@ def search(nums, target)
   r = nums.size - 1
   while l <= r
     mid = (l+r) / 2
-    return mid if nums[mid] == target
     if nums[mid] < target
       l = mid + 1
-    else
+    elsif nums[mid] > target
       r = mid - 1
+    else
+      return mid
     end
   end
   -1
