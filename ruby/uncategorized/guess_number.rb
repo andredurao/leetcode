@@ -13,8 +13,6 @@ def guessNumber(n)
 
   while l <= r
     val = (l + r) / 2
-    p [val, l, r]
-    sleep 1
     compare = guess(val)
     return val if compare == 0
     if compare > 0
