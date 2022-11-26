@@ -1,28 +1,42 @@
 # https://leetcode.com/problems/word-search/
 
-require 'set'
-
 # @param {Character[][]} board
 # @param {String} word
 # @return {Boolean}
 def exist(board, word)
-  board_chars = Set.new
-  board.each do |row|
-    row.each do |char|
-      board_chars.add(char)
+  # Count the frequency of repeated chars and
+  char_frequency = []
+  last = nil
+  word.chars.each do |char|
+    if char != last
+      char_frequency << 1
+    else
+      char_frequency[char_frequency.size - 1] += 1
+    end
+    last = char
+  end
+
+  # Check if the frequency counts is increasing or decreasing
+  theta = 0
+  if char_frequency.size > 1
+    1.upto(char_frequency.size - 1) do |i|
+      theta += char_frequency[i-1] <=> char_frequency[i]
     end
   end
-  return false if (Set.new(word.chars) - board_chars).any?
 
-  height = board.size
-  width = board[0].size
-  chars = word.chars
+  # reverse word if the frequency is increasing
+  word.reverse! if theta > 0
+
+  @height = board.size
+  @width = board[0].size
+  @word = word
+  @board = board
 
   # p '[pos, chars, board, index, height, width]'
   board.each_with_index do |row, i|
     row.each_with_index do |char, j|
       if char == word[0]
-        result = visit([i,j], chars, board, 0, height, width)
+        result = visit(i, j, 0)
         return true if result
       end
     end
@@ -30,23 +44,23 @@ def exist(board, word)
   false
 end
 
-def visit(pos, chars, board, index, height, width)
-  # p [pos, chars, board, index]
-  return true if index == chars.size
+def visit(i, j, index)
+  # p [pos, index, @height, @width]
+  return true if index == @word.size
   # check if pos is out of bounds
-  return false if pos[0] < 0 || pos[0] >= height || pos[1] < 0 || pos[1] >= width
+  return false if i < 0 || i >= @height || j < 0 || j >= @width
 
-  expected = chars[index]
-  return false if board[pos[0]][pos[1]] != expected
-  board[pos[0]][pos[1]] = 'x' # mark visited
+  expected = @word[index]
+  # binding.irb
+  return false if @board[i][j] != expected
+  @board[i][j] = 'x' # mark visited
 
   [[1,0],[-1,0],[0,1],[0,-1]].each do |to|
-    new_pos = [pos[0] + to[0], pos[1] + to[1]]
-    result = visit(new_pos, chars, board, index + 1, height, width)
+    result = visit(i + to[0], j + to[1], index + 1)
     return true if result
   end
 
-  board[pos[0]][pos[1]] = expected # restore value
+  @board[i][j] = expected # restore value
   false
 end
 
