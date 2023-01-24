@@ -4,6 +4,7 @@
 # @param {Integer[][]} trust
 # @return {Integer}
 def find_judge(n, trust)
+  return 1 if n == 1 && trust.empty?
   trusted_map = {}
   truster_map = {}
   trust.each do |truster, trusted|
