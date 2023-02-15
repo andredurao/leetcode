@@ -1,5 +1,6 @@
 class Util
   def self.deserialize(list)
+    return if list.empty?
     node = ListNode.new(list.shift)
     _next = nil
     list.each do |val|
@@ -14,7 +15,6 @@ class Util
   def self.serialize(node)
     result = []
     while node
-      p node
       result << node.val
       node = node.next
     end
