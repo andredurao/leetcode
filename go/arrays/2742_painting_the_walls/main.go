@@ -20,38 +20,33 @@ func main() {
 	// result = paintWalls(cost, time)
 	// fmt.Println(result)
 
-	cost = []int{42, 8, 28, 35, 21, 13, 21, 35}
-	time = []int{2, 1, 1, 1, 2, 1, 1, 2}
-	result = paintWalls(cost, time)
-	fmt.Println(result)
+	// cost = []int{42, 8, 28, 35, 21, 13, 21, 35}
+	// time = []int{2, 1, 1, 1, 2, 1, 1, 2}
+	// result = paintWalls(cost, time)
+	// fmt.Println(result)
 }
 
 func paintWalls(cost []int, time []int) int {
-	memo := make([][]int, len(cost))
-	for i := range cost {
-		memo[i] = make([]int, len(cost)+1)
+	n := len(cost)
+	dp := make([][]int, n+1)
+	for i := range dp {
+		dp[i] = make([]int, n+1)
 	}
-	return dp(0, len(cost), cost, time, &memo)
-}
-
-func dp(i int, remain int, cost []int, time []int, memo *[][]int) int {
-	// fmt.Printf("%v\n", *memo)
-	// fmt.Println("dp")
-	if remain <= 0 {
-		return 0
+	for i := 1; i <= n; i++ {
+		dp[n][i] = int(1e9)
 	}
 
-	if i == len(cost) {
-		return 1000000000
+	for i := n - 1; i >= 0; i-- {
+		for remain := 1; remain <= n; remain++ {
+			max := int(math.Max(0.0, float64(remain-1-time[i])))
+			// max := max(0, remain-1-time[i])
+			paint := cost[i] + dp[i+1][max]
+			dontPaint := dp[i+1][remain]
+			min := int(math.Min(float64(paint), float64(dontPaint)))
+			// min := min(paint, dontPaint)
+			dp[i][remain] = min
+		}
 	}
 
-	if (*memo)[i][remain] != 0 {
-		return (*memo)[i][remain]
-	}
-
-	paint := cost[i] + dp(i+1, remain-1-time[i], cost, time, memo)
-	dontPaint := dp(i+1, remain, cost, time, memo)
-	(*memo)[i][remain] = int(math.Min(float64(paint), float64(dontPaint)))
-
-	return (*memo)[i][remain]
+	return dp[0][n]
 }
