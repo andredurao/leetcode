@@ -2,7 +2,10 @@
 
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 func main() {
 	steps := 3
@@ -12,37 +15,47 @@ func main() {
 }
 
 func numWays(steps int, arrLen int) int {
-	counter := 0
-	dp(0, steps, arrLen, &counter)
-	return counter
+	minArrLen := int(math.Min(float64(steps), float64(arrLen)))
+	memo := make([][]int, minArrLen)
+	for i := 0; i < minArrLen; i++ {
+		memo[i] = make([]int, steps+1)
+		for j := 0; j <= steps; j++ {
+			memo[i][j] = -1
+		}
+	}
+
+	result := dp(0, steps, minArrLen, &memo)
+	return result
 }
 
-func dp(pos int, steps int, size int, counter *int) {
-	if steps == 0 {
+// Based on leetcode solution
+func dp(pos int, remain int, minArrLen int, memo *[][]int) int {
+	if remain == 0 {
 		if pos == 0 {
-			*counter++
+			return 1
 		}
-		return
+		return 0
 	}
 
-	diff := pos - steps
-	if diff == 0 {
-		*counter++
-		return
-	} else if diff > 0 && pos != 0 {
-		return
+	// if that value has been calculated before, just return it's result
+	if (*memo)[pos][remain] != -1 {
+		return (*memo)[pos][remain]
 	}
+
+	result := dp(pos, remain-1, minArrLen, memo)
+
+	mod := int(1e9) + 7
 
 	// left
 	if pos > 0 {
-		dp(pos-1, steps-1, size, counter)
+		result = (result + dp(pos-1, remain-1, minArrLen, memo)) % mod
 	}
 
 	// right
-	if pos < (size - 1) {
-		dp(pos+1, steps-1, size, counter)
+	if pos < minArrLen-1 {
+		result = (result + dp(pos+1, remain-1, minArrLen, memo)) % mod
 	}
 
-	// stay
-	dp(pos, steps-1, size, counter)
+	(*memo)[pos][remain] = result
+	return result
 }
