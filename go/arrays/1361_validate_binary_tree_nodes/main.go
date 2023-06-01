@@ -42,76 +42,52 @@ func main() {
 	fmt.Println(result)
 }
 
+// From editorial
 func validateBinaryTreeNodes(n int, leftChild []int, rightChild []int) bool {
-	srcRefArray := make([]int, n)
-	for i := 0; i < n; i++ {
-		srcRefArray[i] = -1
-	}
-
-	for i, l := range leftChild {
-		r := rightChild[i]
-		// fmt.Println(i, l, r)
-
-		// fmt.Println("l")
-		if l != -1 {
-			if srcRefArray[l] != -1 {
-				return false
-			} else {
-				srcRefArray[l] = i
-			}
-		}
-
-		// fmt.Println("r")
-		if r != -1 {
-			if srcRefArray[r] != -1 {
-				return false
-			} else {
-				srcRefArray[r] = i
-			}
-		}
-	}
-
-	// fmt.Printf("%v\n", srcRefArray)
-
-	rootCount := 0
-	for i := 0; i < n; i++ {
-		if srcRefArray[i] == -1 {
-			rootCount++
-		}
-		if rootCount > 1 {
-			return false
-		}
-	}
-	if rootCount != 1 {
+	root := findRoot(n, leftChild, rightChild)
+	if root == -1 {
 		return false
 	}
 
-	//search for cycles
-	for i := 0; i < n; i++ {
-		path := []int{}
-		item := srcRefArray[i]
-		for {
-			if item == -1 {
-				break
+	seen := make(map[int]int, 0)
+	stack := make([]int, 0)
+	seen[root] = 0
+	stack = append(stack, root)
+
+	for len(stack) > 0 {
+		// pop
+		node := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		children := []int{leftChild[node], rightChild[node]}
+		for _, child := range children {
+			if child != -1 {
+				_, ok := seen[child]
+				if ok {
+					return false
+				}
+				stack = append(stack, child)
+				seen[child] = 1
 			}
-			if included(path, item) {
-				// fmt.Println("loop")
-				return false
-			}
-			path = append(path, item)
-			item = srcRefArray[item]
-			// fmt.Printf("i: %d path: %v\n", i, path)
 		}
 	}
 
-	return true
+	return len(seen) == n
 }
 
-func included(path []int, val int) bool {
-	for _, n := range path {
-		if val == n {
-			return true
+func findRoot(n int, leftChild []int, rightChild []int) int {
+	children := make(map[int]int)
+	for _, l := range leftChild {
+		children[l] = 1
+	}
+	for _, r := range rightChild {
+		children[r] = 1
+	}
+
+	for i := 0; i < n; i++ {
+		_, ok := children[i]
+		if !ok {
+			return i
 		}
 	}
-	return false
+	return -1
 }
