@@ -3,7 +3,9 @@
 package main
 
 import (
+	"container/list"
 	"fmt"
+	"math"
 )
 
 func main() {
@@ -14,83 +16,63 @@ func main() {
 	n := 5
 	relations := [][]int{{1, 5}, {2, 5}, {3, 5}, {3, 4}, {4, 5}}
 	time := []int{1, 2, 3, 4, 5}
+
 	result := minimumTime(n, relations, time)
 	fmt.Println(result)
 }
 
-type Course struct {
-	Prerequisites []int
-	Time          int
-	Completed     bool
-}
-
-type MinCoursesResponses struct {
-	Indexes  []int
-	MinTime  int
-	MinIndex int
-}
-
+// following editorial
 func minimumTime(n int, relations [][]int, time []int) int {
-	// build courses array
-	courses := make([]Course, n)
-
+	graph := make(map[int][]int)
 	for i := 0; i < n; i++ {
-		courses[i].Time = time[i]
-		courses[i].Completed = false
-		courses[i].Prerequisites = make([]int, 0)
+		graph[i] = make([]int, 0)
 	}
 
-	for _, relation := range relations {
-		index := relation[1] - 1
-		courses[index].Prerequisites = append(courses[index].Prerequisites, relation[0]-1)
+	// indegree
+	indegree := make([]int, n)
+	for _, edge := range relations {
+		from := edge[0] - 1
+		to := edge[1] - 1
+		graph[from] = append(graph[from], to)
+		indegree[to]++
 	}
 
-	fmt.Printf("%v\n", courses)
+	queue := list.New()
+	maxTime := make([]int, n)
 
-	timeSpent := 0
-
-	for {
-		minCourses := coursesThatCanBeStarted(courses)
-		fmt.Printf("%v\n", minCourses)
-
-		if len(minCourses.Indexes) == 0 {
-			return timeSpent
+	// initialize list
+	for node := 0; node < n; node++ {
+		if indegree[node] == 0 {
+			queue.PushBack(node)
+			maxTime[node] = time[node]
 		}
-		timeSpent = timeSpent + minCourses.MinTime
-
-		for _, i := range minCourses.Indexes {
-			courses[i].Time = courses[i].Time - minCourses.MinTime
-			if courses[i].Time <= 0 {
-				courses[i].Completed = true
-			}
-		}
-
-		fmt.Printf("%v\n", courses)
 	}
-}
 
-func coursesThatCanBeStarted(courses []Course) (result MinCoursesResponses) {
-	for index, course := range courses {
-		if !course.Completed {
-			completedPrerequisites := 0
-			for _, prerequisite := range course.Prerequisites {
-				if courses[prerequisite].Completed {
-					completedPrerequisites++
-				}
-			}
-			if completedPrerequisites == len(course.Prerequisites) {
-				if len(result.Indexes) == 0 {
-					result.MinTime = course.Time
-					result.MinIndex = index
-				}
-				result.Indexes = append(result.Indexes, index)
-
-				if course.Time < result.MinTime {
-					result.MinTime = course.Time
-					result.MinIndex = index
-				}
+	for queue.Len() > 0 {
+		head := queue.Front()
+		queue.Remove(head)
+		node := head.Value.(int)
+		neighbours := graph[node]
+		for _, neighbour := range neighbours {
+			max := int(math.Max(
+				float64(maxTime[neighbour]),
+				float64(time[neighbour]+maxTime[node]),
+			))
+			maxTime[neighbour] = max
+			indegree[neighbour] = indegree[neighbour] - 1
+			if indegree[neighbour] == 0 {
+				queue.PushBack(neighbour)
 			}
 		}
 	}
-	return
+
+	result := 0
+	for i := 0; i < n; i++ {
+		result = int(math.Max(
+			float64(result),
+			float64(maxTime[i]),
+		))
+	}
+
+	return result
 }
