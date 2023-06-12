@@ -4,8 +4,6 @@ require 'set'
 
 # @param {String} s
 # @return {String}
-# @param {String} s
-# @return {String}
 def remove_duplicate_letters(s)
   seen = Set.new
   q = []

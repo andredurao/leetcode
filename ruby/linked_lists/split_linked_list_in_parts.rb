@@ -23,7 +23,6 @@ def split_list_to_parts(head, k)
   k.times do
     head ||= ListNode.new(nil)
     start = head
-    binding.irb
     packet = []
     qty = packet_size
     if extras > 0
