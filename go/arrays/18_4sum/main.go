@@ -14,43 +14,58 @@ func main() {
 	fmt.Printf("%v\n", result)
 }
 
+// From editorial
 func fourSum(nums []int, target int) [][]int {
-	resultMap := make(map[string][]int)
+	sort.IntSlice.Sort(nums)
+	return kSum(nums, target, 4)
+}
+
+func kSum(nums []int, target int, k int) [][]int {
 	result := make([][]int, 0)
-	pairs := mapPairs(&nums)
 
-	for sum, list1 := range pairs {
-		for _, idx1 := range pairs[target-sum] {
-			for _, idx2 := range list1 {
-				if idx1[0] != idx2[0] && idx1[1] != idx2[1] && idx1[0] != idx2[1] && idx1[1] != idx2[0] {
-					// fmt.Println(sum, -sum, idx2, idx1)
-					item := []int{nums[idx2[0]], nums[idx2[1]], nums[idx1[0]], nums[idx1[1]]}
-
-					sort.IntSlice.Sort(item)
-					fmt.Println(idx1, idx2, item)
-					strItem := fmt.Sprintf("%d-%d-%d-%d", item[0], item[1], item[2], item[3])
-					resultMap[strItem] = item
-				}
-			}
-		}
+	if len(nums) == 0 {
+		return result
 	}
 
-	for _, array := range resultMap {
-		result = append(result, array)
+	average_value := target / k
+	if average_value < nums[0] || nums[len(nums)-1] < average_value {
+		return result
+	}
+
+	if k == 2 {
+		return twoSum(nums, target)
+	}
+
+	for i := range nums {
+		if i == 0 || nums[i-1] != nums[i] {
+			kSumResult := kSum(nums[i+1:], target-nums[i], k-1)
+			for _, subsets := range kSumResult {
+				subsets = append([]int{nums[i]}, subsets...)
+				result = append(result, subsets)
+			}
+		}
 	}
 
 	return result
 }
 
-func mapPairs(nums *[]int) map[int][][]int {
-	pairs := make(map[int][][]int, 0)
+func twoSum(nums []int, target int) [][]int {
+	result := make([][]int, 0)
+	lo := 0
+	hi := len(nums) - 1
 
-	for i := 0; i < len(*nums)-1; i++ {
-		for j := i + 1; j < len(*nums); j++ {
-			total := (*nums)[i] + (*nums)[j]
-			pairs[total] = append(pairs[total], []int{i, j})
+	for lo < hi {
+
+		sum := nums[lo] + nums[hi]
+		if sum < target || (lo > 0 && nums[lo] == nums[lo-1]) {
+			lo++
+		} else if sum > target || (hi < len(nums)-1 && nums[hi] == nums[hi+1]) {
+			hi--
+		} else {
+			result = append(result, []int{nums[lo], nums[hi]})
+			lo++
+			hi--
 		}
 	}
-
-	return pairs
+	return result
 }
