@@ -1,0 +1,30 @@
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+func main() {
+	s := "aabca"
+	fmt.Println(countPalindromicSubsequence(s))
+}
+
+func countPalindromicSubsequence(s string) int {
+	total := 0
+	letters := map[rune]struct{}{}
+	for _, c := range s {
+		letters[rune(c)] = struct{}{}
+	}
+	for c := range letters {
+		l := strings.Index(s, string(c))
+		r := strings.LastIndex(s, string(c))
+		palindromes := map[byte]struct{}{}
+		for i := l + 1; i < r; i++ {
+			palindromes[s[i]] = struct{}{}
+		}
+		total += len(palindromes)
+	}
+
+	return total
+}
