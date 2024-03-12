@@ -10,7 +10,7 @@ type ListNode struct {
 }
 
 func main() {
-	values := []int{1, 2, -3, 3, 1}
+	values := []int{0} // 5,-3,-4,1,6,-2,-5
 	pos := -1
 
 	head := buildList(values, pos)
@@ -29,37 +29,89 @@ func main() {
  * }
  */
 func removeZeroSumSublists(head *ListNode) *ListNode {
-	var prev *ListNode
-	prev = nil
-	stack := []*ListNode{}
+	nodeStack := []int{}
+	totalStack := []int{}
 
 	for head != nil {
-		fmt.Println("checking:", head.Val)
-		// [1, 2, -3, 3, 1]
-		//     |
-		// check if next two values are present
-		if head.Next != nil && (head.Val+head.Next.Val == 0) {
-			// fmt.Printf("match %d, %d, %v\n", head.Val, head.Next.Val, stack)
-			if len(stack) > 0 {
-				prev, stack = stack[len(stack)-1], stack[:len(stack)-1]
-			} else {
-				prev = nil
-			}
-			next := head.Next.Next
-			head = prev
-			if head != nil {
-				head.Next = next
-			}
-		} else {
-			stack = append(stack, head)
-			head = head.Next
+		if head.Val == 0 {
+			continue
 		}
+		nodeStack = append(nodeStack, head.Val)
+		if len(totalStack) > 0 && ((head.Val > 0 && totalStack[len(totalStack)-1] > 0) || (head.Val < 0 && totalStack[len(totalStack)-1] < 0)) {
+			totalStack[len(totalStack)-1] += head.Val
+		} else {
+			totalStack = append(totalStack, head.Val)
+		}
+		// fmt.Println("checking:", head.Val, nodeStack, totalStack)
+		if len(totalStack) > 1 && (totalStack[len(totalStack)-1]+totalStack[len(totalStack)-2] == 0) {
+			// fmt.Println("TOTAL DEL RIGHT")
+			lastSum := totalStack[len(totalStack)-1]
+
+			cursor := 0
+			total := 0
+			for cursor = len(nodeStack) - 1; total != lastSum; cursor-- {
+				total += nodeStack[cursor]
+			}
+
+			nodeStack = nodeStack[:cursor+1]
+			totalStack = totalStack[:len(totalStack)-1]
+			// fmt.Println("deleted right val:", head.Val, nodeStack, totalStack)
+
+			// fmt.Println("TOTAL DEL LEFT")
+			lastSum = totalStack[len(totalStack)-1]
+			total = 0
+			for cursor = len(nodeStack) - 1; total != lastSum; cursor-- {
+				total += nodeStack[cursor]
+			}
+			nodeStack = nodeStack[:cursor+1]
+			totalStack = totalStack[:len(totalStack)-1]
+			// fmt.Println("deleted left val:", head.Val, nodeStack, totalStack)
+		}
+
+		// r and l are + and -
+		if len(totalStack) > 1 && (nodeStack[len(nodeStack)-1]+nodeStack[len(nodeStack)-2] == 0) {
+			// fmt.Println("NODESTACK DEL RIGHT")
+
+			nodeStack = nodeStack[:len(nodeStack)-1]
+			totalStack = totalStack[:len(totalStack)-1]
+			// fmt.Println("deleted right val:", head.Val, nodeStack, totalStack)
+
+			// fmt.Println("NODESTACK DEL LEFT")
+			if totalStack[len(totalStack)-1]+head.Val > 0 {
+				totalStack[len(totalStack)-1] += head.Val
+			} else {
+				totalStack = totalStack[:len(totalStack)-1]
+			}
+
+			if nodeStack[len(nodeStack)-1]+head.Val > 0 {
+				nodeStack[len(nodeStack)-1] += head.Val
+			} else {
+				nodeStack = nodeStack[:len(nodeStack)-1]
+			}
+
+			// fmt.Println("deleted left val:", head.Val, nodeStack, totalStack)
+		}
+
+		head = head.Next
 	}
 
-	if len(stack) > 0 {
-		return stack[0]
+	if len(nodeStack) == 0 {
+		return nil
 	}
-	return nil
+
+	head = &ListNode{nodeStack[0], nil}
+	prev := head
+	cur := head
+
+	for i, val := range nodeStack {
+		if i > 0 {
+			cur = &ListNode{val, nil}
+			prev.Next = cur
+		}
+		prev = cur
+	}
+
+	return head
 }
 
 // ------------------------------------------------------------------
