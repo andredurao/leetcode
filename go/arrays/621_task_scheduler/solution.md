@@ -1,21 +1,23 @@
-// https://leetcode.com/problems/task-scheduler/description/
+# Intuition
+My first thought is that I've had to store the frequency of tasks in a hash and iterate this hash in a way that I don't need to repeat the recent `n` values.
 
-package main
 
-import (
-	"fmt"
-)
+# Approach
+1. Iterate tasks and store the frequency of tasks in a hash `tasksMap`
+2. Initialize an empty hash map to store the distance of tasks `tasksDistanceMap`
+3. While `tasksMap` is not empty do the following:
+2.1. Search for the task (`cur`) with max count and which the distance is greater than `n`, if none satisfy this condition stay idle for this cycle
+2.2. Reduce the count of that task in `tasksMap`
+2.3. Remove the entries in both hashes if count is zero
+2.4. Increment all distances in `tasksDistanceMap`
 
-func main() {
-	// ABCDABCDABCE
-	tasks := []byte{'A', 'A', 'A', 'B', 'B', 'B', 'C', 'C', 'C', 'D', 'D', 'E'}
-	// tasks := []byte{'A', 'B', 'A'}
-	n := 2
+# Complexity
+- Time complexity: $$O(n^2)$$
 
-	res := leastInterval(tasks, n)
-	fmt.Println(res)
-}
+- Space complexity: $$O(n^2)$$
 
+# Code
+```
 func leastInterval(tasks []byte, n int) int {
 	// initialize maps
 	tasksMap := map[byte]int{}
@@ -73,3 +75,4 @@ func leastInterval(tasks []byte, n int) int {
 
 	return total
 }
+```
