@@ -32,10 +32,17 @@ func BuildList(values []int) *ListNode {
 }
 
 func PrintList(head *ListNode) {
-	i := 0
-	for head != nil && i < 10 {
-		fmt.Println("val", head.Val)
+	for head != nil {
+		fmt.Println(head.Val)
 		head = head.Next
-		i++
 	}
+}
+
+func LinkedListToArray(head *ListNode) []int {
+	res := []int{}
+	for head != nil {
+		res = append(res, head.Val)
+		head = head.Next
+	}
+	return res
 }
