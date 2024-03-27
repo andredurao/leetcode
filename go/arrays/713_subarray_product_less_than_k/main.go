@@ -9,7 +9,7 @@ func main() {
 	fmt.Println(numSubarrayProductLessThanK(nums, 100))
 }
 
-// From editorial
+// From editorial added a couple conditions on l's loop
 func numSubarrayProductLessThanK(nums []int, k int) int {
 	if k <= 1 {
 		return 0
@@ -20,16 +20,16 @@ func numSubarrayProductLessThanK(nums []int, k int) int {
 	l := 0
 	r := 0
 
-	for ; r < len(nums); r++ {
+	for r < len(nums) {
 		product *= nums[r]
 
-		// product overflows
-		for product >= k {
+		for product >= k && l <= r && l < len(nums) {
 			product /= nums[l]
 			l++
 		}
 
 		count += r - l + 1
+		r++
 	}
 
 	return count
