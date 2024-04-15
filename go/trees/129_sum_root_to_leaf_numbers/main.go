@@ -18,27 +18,22 @@ import (
  */
 
 func sumNumbers(root *TreeNode) int {
-	paths := []int{}
-	traverse(root, []int{root.Val}, &paths)
 	total := 0
-	for _, val := range paths {
-		total += val
-	}
+	traverse(root, []int{root.Val}, &total)
 	return total
 }
 
-func traverse(node *TreeNode, path []int, paths *[]int) {
-	total := sumPath(&path)
+func traverse(node *TreeNode, path []int, total *int) {
 	if node.Left == nil && node.Right == nil {
-		fmt.Println("LEAF! ", path, total)
-		*paths = append(*paths, total)
+		pathTotal := sumPath(&path)
+		*total += pathTotal
 		return
 	}
 	if node.Left != nil {
-		traverse(node.Left, append(path, node.Left.Val), paths)
+		traverse(node.Left, append(path, node.Left.Val), total)
 	}
 	if node.Right != nil {
-		traverse(node.Right, append(path, node.Right.Val), paths)
+		traverse(node.Right, append(path, node.Right.Val), total)
 	}
 }
 
