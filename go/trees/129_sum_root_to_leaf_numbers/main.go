@@ -19,30 +19,21 @@ import (
 
 func sumNumbers(root *TreeNode) int {
 	total := 0
-	traverse(root, []int{root.Val}, &total)
+	traverse(root, root.Val, &total)
 	return total
 }
 
-func traverse(node *TreeNode, path []int, total *int) {
+func traverse(node *TreeNode, pathTotal int, total *int) {
 	if node.Left == nil && node.Right == nil {
-		pathTotal := sumPath(&path)
 		*total += pathTotal
 		return
 	}
 	if node.Left != nil {
-		traverse(node.Left, append(path, node.Left.Val), total)
+		traverse(node.Left, (pathTotal*10 + node.Left.Val), total)
 	}
 	if node.Right != nil {
-		traverse(node.Right, append(path, node.Right.Val), total)
+		traverse(node.Right, (pathTotal*10 + node.Right.Val), total)
 	}
-}
-
-func sumPath(path *[]int) (total int) {
-	for _, val := range *path {
-		total *= 10
-		total += val
-	}
-	return
 }
 
 // ------------------------------------------------------
