@@ -3,6 +3,7 @@
 package TreeNode
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -45,4 +46,33 @@ func BuildTree(input string) *TreeNode {
 		node.Right = nodes[i]
 	}
 	return nodes[0]
+}
+
+func TreeToArray(root *TreeNode) string {
+	nodeMap := map[int]string{}
+	maxIndex := 0
+	traverseFillNodeMap(root, 0, nodeMap, &maxIndex)
+
+	vals := []string{}
+	for i := 0; i <= maxIndex; i++ {
+		val, found := nodeMap[i]
+		if found {
+			vals = append(vals, val)
+		} else {
+			vals = append(vals, "null")
+		}
+	}
+
+	return fmt.Sprintf("[%s]", strings.Join(vals, ","))
+}
+
+func traverseFillNodeMap(node *TreeNode, index int, nodeMap map[int]string, maxIndex *int) {
+	if node == nil {
+		return
+	}
+	nodeMap[index] = fmt.Sprintf("%d", node.Val)
+	*maxIndex = max(index, *maxIndex)
+
+	traverseFillNodeMap(node.Left, 2*index+1, nodeMap, maxIndex)
+	traverseFillNodeMap(node.Right, 2*index+2, nodeMap, maxIndex)
 }
