@@ -19,34 +19,31 @@ func commonChars(words []string) []string {
 		prev := cur
 		cur = wordFreq(&word)
 		// filter out chars that were not repeated or with different frequencies
-		for ch, count := range cur {
-			if _, found := prev[ch]; !found {
-				delete(cur, ch)
+		for i, count := range cur {
+			if prev[i] == 0 {
+				cur[i] = 0
 				continue
 			}
-			if count > prev[ch] {
-				cur[ch] = prev[ch]
+			if count > prev[i] {
+				cur[i] = prev[i]
 			}
 		}
 	}
 
 	res := []string{}
 	for ch, count := range cur {
-		for i := 0; i < count; i++ {
-			res = append(res, string(ch))
+		for i := byte(0); i < count; i++ {
+			res = append(res, string(ch+'a'))
 		}
 	}
 	return res
 }
 
-func wordFreq(word *string) map[rune]int {
-	f := map[rune]int{}
+func wordFreq(word *string) []byte {
+	f := make([]byte, 26)
 
 	for _, ch := range *word {
-		if _, found := f[ch]; !found {
-			f[ch] = 0
-		}
-		f[ch]++
+		f[ch-'a']++
 	}
 
 	return f
