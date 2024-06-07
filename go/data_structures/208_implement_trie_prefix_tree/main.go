@@ -7,16 +7,15 @@ func main() {
 	trie.Search("apple")
 	trie.Search("app")
 	trie.StartsWith("app")
-	// trie.Insert("app")
-	// trie.Search("app")
+	trie.Insert("app")
+	trie.Search("app")
 }
 
 // ===========================
 
 type Node struct {
-	Children []*Node
+	Children [26]*Node
 	Terminal bool
-	Val      string
 }
 
 type Trie struct {
@@ -24,18 +23,17 @@ type Trie struct {
 }
 
 func Constructor() Trie {
-	return Trie{&Node{make([]*Node, 26), false, ""}}
+	return Trie{&Node{Terminal: false}}
 }
 
 func (this *Trie) Insert(word string) {
 	node := this.Root
 	for _, ch := range word {
 		if node.Children[ch-'a'] == nil {
-			node.Children[ch-'a'] = &Node{make([]*Node, 26), false, ""}
+			node.Children[ch-'a'] = &Node{Terminal: false}
 		}
 		node = node.Children[ch-'a']
 	}
-	node.Val = word
 	node.Terminal = true
 }
 
