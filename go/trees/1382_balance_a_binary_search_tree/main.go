@@ -19,14 +19,7 @@ func balanceBST(root *TreeNode) *TreeNode {
 	vals := []int{}
 	traverse(root, &vals)
 
-	l, r := 0, len(vals)-1
-	midIndex := (l + r) / 2
-	mid := &TreeNode{Val: vals[midIndex], Left: nil, Right: nil}
-	used := map[int]struct{}{}
-	used[mid.Val] = struct{}{}
-	populateTree(mid, &vals, l, r, used)
-
-	return mid
+	return populateTree(&vals, 0, len(vals)-1)
 }
 
 func traverse(node *TreeNode, vals *[]int) {
@@ -38,22 +31,14 @@ func traverse(node *TreeNode, vals *[]int) {
 	traverse(node.Right, vals)
 }
 
-func populateTree(node *TreeNode, vals *[]int, l, r int, used map[int]struct{}) *TreeNode {
-	if l < 0 || r >= len(*vals) {
+func populateTree(vals *[]int, l, r int) *TreeNode {
+	if l > r {
 		return nil
 	}
 	mid := (l + r) / 2
-	if node == nil {
-		if _, found := used[(*vals)[mid]]; found {
-			return nil
-		} else {
-			node = &TreeNode{Val: (*vals)[mid]}
-			used[node.Val] = struct{}{}
-		}
-	}
-	node.Left = populateTree(node.Left, vals, l, mid, used)
-	node.Right = populateTree(node.Right, vals, mid+1, r, used)
-	return node
+	leftNode := populateTree(vals, l, mid-1)
+	rightNode := populateTree(vals, mid+1, r)
+	return &TreeNode{Val: (*vals)[mid], Left: leftNode, Right: rightNode}
 }
 
 // ------------------------------------------------------
