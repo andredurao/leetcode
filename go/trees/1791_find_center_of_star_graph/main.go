@@ -8,20 +8,8 @@ func main() {
 }
 
 func findCenter(edges [][]int) int {
-	f := map[int]int{}
-	for i := range edges {
-		f[edges[i][0]]++
-		f[edges[i][1]]++
+	if edges[0][0] == edges[1][0] || edges[0][0] == edges[1][1] {
+		return edges[0][0]
 	}
-
-	center := -1
-	centerCount := -1
-	for edge, count := range f {
-		if count > centerCount {
-			centerCount = count
-			center = edge
-		}
-	}
-
-	return center
+	return edges[0][1]
 }
