@@ -30,8 +30,8 @@ func maximumImportance(n int, roads [][]int) int64 {
 	}
 
 	total := int64(0)
-	for _, road := range roads {
-		total += int64(labels[road[0]] + labels[road[1]])
+	for i := range f {
+		total += int64(labels[f[i][0]] * f[i][1])
 	}
 
 	return total
