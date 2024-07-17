@@ -8,9 +8,11 @@ import (
 )
 
 func main() {
-	input := "[1,2,3,4,5,6,7]"
+	// input := "[1,2,3,4,5,6,7]"
+	input := "[1,2,3,null,null,null,4]"
+
 	root := BuildTree(input)
-	to_delete := []int{3, 5}
+	to_delete := []int{2, 1}
 	res := delNodes(root, to_delete)
 	for _, t := range res {
 		fmt.Println(TreeToArray(t))
@@ -43,20 +45,19 @@ func delNodes(root *TreeNode, to_delete []int) []*TreeNode {
 		nodesMap[val] = newDelNodeStruct
 	}
 
-	// sort to_delete list by depth of nodes to avoid
-	// sort.Slice(to_delete, func(i, j int) bool { return nodesMap[to_delete[i]].Depth < nodesMap[to_delete[j]].Depth })
 	// fmt.Println(nodesMap)
-	// fmt.Println(to_delete)
 
 	// delete nodes
 	for _, nodeStruct := range nodesMap {
 		parent := nodeStruct.Parent
-		if parent != nil && nodeStruct.MarkedForDelete {
+		if nodeStruct.MarkedForDelete {
 			// fmt.Println("del", nodeStruct.Node.Val)
-			if parent.Left == nodeStruct.Node {
-				parent.Left = nil
-			} else {
-				parent.Right = nil
+			if parent != nil {
+				if parent.Left == nodeStruct.Node {
+					parent.Left = nil
+				} else {
+					parent.Right = nil
+				}
 			}
 			if nodeStruct.Node.Left != nil {
 				tmp := nodesMap[nodeStruct.Node.Left.Val]
@@ -88,7 +89,6 @@ func traverse(parent, node *TreeNode, nodesMap map[int]DelNodeStruct) {
 	if node == nil {
 		return
 	}
-	// nodesMap[node.Val] = []*TreeNode{node, parent}
 	nodesMap[node.Val] = DelNodeStruct{Parent: parent, Node: node, MarkedForDelete: false}
 	traverse(node, node.Left, nodesMap)
 	traverse(node, node.Right, nodesMap)
