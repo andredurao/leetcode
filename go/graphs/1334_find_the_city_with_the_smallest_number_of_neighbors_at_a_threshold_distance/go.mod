@@ -1,0 +1,3 @@
+module andredurao.dev/leetcode/go/graphs/1334_find_the_city_with_the_smallest_number_of_neighbors_at_a_threshold_distance
+
+go 1.21.2
