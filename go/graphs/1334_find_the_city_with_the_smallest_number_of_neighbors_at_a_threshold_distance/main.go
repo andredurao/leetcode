@@ -11,9 +11,15 @@ func main() {
 	// res := findTheCity(n, edges, distanceThreshold)
 	// fmt.Println(res)
 
-	n := 5
-	edges := [][]int{{0, 1, 2}, {0, 4, 8}, {1, 2, 3}, {1, 4, 2}, {2, 3, 1}, {3, 4, 1}}
-	distanceThreshold := 2
+	// n := 5
+	// edges := [][]int{{0, 1, 2}, {0, 4, 8}, {1, 2, 3}, {1, 4, 2}, {2, 3, 1}, {3, 4, 1}}
+	// distanceThreshold := 2
+	// res := findTheCity(n, edges, distanceThreshold)
+	// fmt.Println(res)
+
+	n := 6
+	edges := [][]int{{0, 1, 10}, {0, 2, 1}, {2, 3, 1}, {1, 3, 1}, {1, 4, 1}, {4, 5, 10}}
+	distanceThreshold := 20
 	res := findTheCity(n, edges, distanceThreshold)
 	fmt.Println(res)
 
@@ -35,7 +41,9 @@ func findTheCity(n int, edges [][]int, distanceThreshold int) int {
 		visit(i, 0, distanceThreshold, visits, neighboursMap)
 		counts[len(visits)] = append(counts[len(visits)], i)
 		minCount = min(minCount, len(visits))
+		fmt.Println(i, visits)
 	}
+	fmt.Println(counts)
 
 	res := counts[minCount][0]
 	for i := range counts[minCount] {
